@@ -18,6 +18,7 @@ public class Log4jPropertiesTranslator extends ConfigTranslator {
     private static final String XML_LAYOUT = "SmxXMLLayout";
     private static final String APPENDER_PATTERN_KEY = "ConversionPattern";
     private static final String LOGGER_PREFIX = "log4j.logger";
+    private static final String APPENDER_FILE_KEY = "file";
     private final Log4jProperties log4jProperties;
 
     public Log4jPropertiesTranslator(Log4jProperties log4jProperties) {
@@ -39,7 +40,15 @@ public class Log4jPropertiesTranslator extends ConfigTranslator {
                 if (!appenderMap.containsKey(appenderName)) {
                     Appender appender = new Appender();
                     appender.setName(appenderName);
-                    appender.setType(getAppenderType(properties.getProperty(APPENDER_PREFIX + "." + appenderName)));
+                    String appenderType = null;
+                    String appenderTypeValue = properties.getProperty(APPENDER_PREFIX + "." + appenderName);
+                    if (appenderTypeValue.contains(CONSOLE_APPENDER_TYPE)) {
+                        appenderType = "Console";
+                    } else if (appenderTypeValue.contains(FILE_APPENDER_TYPE)) {
+                        appenderType = "File";
+                        appender.setFileName(properties.getProperty(buildPropertyName(APPENDER_PREFIX, appenderName, APPENDER_FILE_KEY)));
+                    }
+                    appender.setType(appenderType);
                     appender.setLayout(getAppenderLayout(properties, appenderName));
                     appenderMap.put(appenderName, appender);
                 }
@@ -66,16 +75,6 @@ public class Log4jPropertiesTranslator extends ConfigTranslator {
         }
         layout.setType(layoutType);
         return layout;
-    }
-
-    private String getAppenderType(String property) {
-        if (property.contains(CONSOLE_APPENDER_TYPE)) {
-            return "Console";
-        }
-        if (property.contains(FILE_APPENDER_TYPE)) {
-            return "File";
-        }
-        return null;
     }
 
     private List<Logger> getLoggers(Properties properties) {
