@@ -40,7 +40,7 @@ public class ConfigReader {
             T parsed = configType.newInstance();
             Properties props = new Properties();
             props.load(Files.newInputStream(path));
-            parsed.getLineTranslator().translate(props);
+            parsed.getPropertiesTranslator().translate(props);
             return parsed;
         } catch (Exception e) {
             System.err.println("file: " + path + " was not translated because of error: " + e);

@@ -1,7 +1,6 @@
 package ua.dp.isd.mbil.log4j.properties.converter.util;
 
 import ua.dp.isd.mbil.log4j.properties.converter.model.Config;
-import ua.dp.isd.mbil.log4j.properties.converter.model.ConfigElement;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,8 +11,12 @@ import java.util.stream.Collectors;
 
 public class ConfigWriter {
     public void write(Config config, String destination) {
-        Path destinationFile = Paths.get(destination, config.getConfigFileName());
+        Path destinationPath = Paths.get(destination);
         try {
+            if (!Files.exists(destinationPath)) {
+                Files.createDirectories(destinationPath);
+            }
+            Path destinationFile = Paths.get(destination, config.getConfigFileName());
             Files.write(destinationFile, getLines(config));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -21,6 +24,6 @@ public class ConfigWriter {
     }
 
     private List<String> getLines(Config config) {
-        return config.getAllElements().stream().map(ConfigElement::toString).collect(Collectors.toList());
+        return config.getAllElements().stream().map(Object::toString).collect(Collectors.toList());
     }
 }

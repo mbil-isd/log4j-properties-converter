@@ -5,22 +5,25 @@ import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Logger;
 import ua.dp.isd.mbil.log4j.properties.converter.model.elements.RootLogger;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class Config {
-
-    public static final String TEST =  "test";
     private RootLogger rootLogger;
     private List<Logger> loggers;
     private List<Appender> appenders;
 
     public abstract String getConfigFileName();
 
-    public abstract void addLine(String line);
+    public abstract ConfigTranslator getPropertiesTranslator();
 
-    public abstract ConfigTranslator getLineTranslator();
-
-    public abstract Collection<ConfigElement> getAllElements();
+    public Collection<Object> getAllElements() {
+        return Stream.of(loggers, appenders, Collections.singleton(rootLogger))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
 
     public void setRootLogger(RootLogger rootLogger) {
         this.rootLogger = rootLogger;
