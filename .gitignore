@@ -36,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/log4j2.properties
+/.idea/
+/log4j.properties
