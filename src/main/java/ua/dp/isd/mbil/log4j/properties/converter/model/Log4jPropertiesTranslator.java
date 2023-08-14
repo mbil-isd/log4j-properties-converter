@@ -97,8 +97,7 @@ public class Log4jPropertiesTranslator extends ConfigTranslator {
     private RootLogger getRootLogger(Properties properties) {
         String value = properties.getProperty(ROOT_LOGGER_KEY);
         if (value == null) {
-            System.out.println("no root logger found!");
-            return null;
+            throw new RuntimeException("no root logger found");
         }
 
         RootLogger rootLogger = new RootLogger();

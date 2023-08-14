@@ -20,8 +20,8 @@ public class ConfigConverter {
 
     }
 
-    public void run() {
-        List<Log4jProperties> configs = reader.read(".", Log4jProperties.class);
+    public void run(String path, boolean deleteAfterReading) {
+        List<Log4jProperties> configs = reader.read(path, Log4jProperties.class, deleteAfterReading);
         System.out.println("found: " + configs.size() + " config files to convert");
         List<Log4j2Properties> converted = configs.stream().map(this::convertToLog4j2).collect(Collectors.toList());
         System.out.println("converted: " + converted.size() + " config files");
