@@ -1,19 +1,18 @@
 package ua.dp.isd.mbil.log4j.properties.converter.model;
 
-public class Log4jProperties extends Log4jConfig
-{
-    private static final String CONFIG_FILENAME = "log4j.properties";
+public class Log4j2XmlConfig extends Log4j2Config {
     @Override
     public String getConfigFileName() {
-        return CONFIG_FILENAME;
+        return "log4j2.xml";
     }
+
     @Override
     public ConfigTranslator getPropertiesTranslator() {
-        return new Log4jPropertiesTranslator(this);
+        return null;
     }
 
     @Override
     public ConfigType getConfigType() {
-        return ConfigType.PROPERTIES;
+        return ConfigType.XML;
     }
 }

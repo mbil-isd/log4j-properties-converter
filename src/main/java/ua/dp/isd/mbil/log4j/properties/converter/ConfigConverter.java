@@ -1,10 +1,13 @@
 package ua.dp.isd.mbil.log4j.properties.converter;
 
-import ua.dp.isd.mbil.log4j.properties.converter.model.Log4j2Properties;
+import ua.dp.isd.mbil.log4j.properties.converter.model.Log4j2Config;
+import ua.dp.isd.mbil.log4j.properties.converter.model.Log4jConfig;
 import ua.dp.isd.mbil.log4j.properties.converter.model.Log4jProperties;
+import ua.dp.isd.mbil.log4j.properties.converter.model.Log4jXmlConfig;
 import ua.dp.isd.mbil.log4j.properties.converter.util.ConfigReader;
 import ua.dp.isd.mbil.log4j.properties.converter.util.ConfigWriter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,15 +24,22 @@ public class ConfigConverter {
     }
 
     public void run(String path, boolean deleteAfterReading) {
-        List<Log4jProperties> configs = reader.read(path, Log4jProperties.class, deleteAfterReading);
-        System.out.println("found: " + configs.size() + " config files to convert");
-        List<Log4j2Properties> converted = configs.stream().map(this::convertToLog4j2).collect(Collectors.toList());
+        List<Log4jProperties> properties = reader.read(path, Log4jProperties.class, deleteAfterReading);
+        System.out.println("found: " + properties.size() + " properties files to convert");
+        List<Log4jXmlConfig> xmlConfigs = reader.read(path, Log4jXmlConfig.class, deleteAfterReading);
+        System.out.println("found: " + xmlConfigs.size() + " xml config files to convert");
+
+        List<Log4jConfig> configs = new ArrayList<>();
+        configs.addAll(properties);
+        configs.addAll(xmlConfigs);
+
+        List<Log4j2Config> converted = configs.stream().map(this::convertToLog4j2).collect(Collectors.toList());
         System.out.println("converted: " + converted.size() + " config files");
         converted.forEach(writer::write);
         System.out.println("files were written!");
     }
 
-    private Log4j2Properties convertToLog4j2(Log4jProperties log4JProperties) {
+    private Log4j2Config convertToLog4j2(Log4jConfig log4JProperties) {
         return log4jToLog4j2Converter.convert(log4JProperties);
     }
 }

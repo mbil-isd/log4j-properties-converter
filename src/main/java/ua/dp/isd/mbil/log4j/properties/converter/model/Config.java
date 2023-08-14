@@ -17,6 +17,10 @@ public abstract class Config {
     private List<Appender> appenders;
     private Path path;
 
+    public enum ConfigType {
+        XML, PROPERTIES
+    }
+
     public abstract String getConfigFileName();
 
     public abstract ConfigTranslator getPropertiesTranslator();
@@ -58,4 +62,6 @@ public abstract class Config {
     public Path getPath() {
         return path;
     }
+
+    public abstract ConfigType getConfigType();
 }

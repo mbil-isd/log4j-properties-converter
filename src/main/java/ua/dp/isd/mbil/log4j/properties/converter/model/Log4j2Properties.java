@@ -1,6 +1,6 @@
 package ua.dp.isd.mbil.log4j.properties.converter.model;
 
-public class Log4j2Properties extends Config {
+public class Log4j2Properties extends Log4j2Config {
     private static final String CONFIG_FILENAME = "log4j2.properties";
     @Override
     public String getConfigFileName() {
@@ -10,6 +10,11 @@ public class Log4j2Properties extends Config {
     @Override
     public ConfigTranslator getPropertiesTranslator() {
         return new Log4j2PropertiesTranslator(this);
+    }
+
+    @Override
+    public ConfigType getConfigType() {
+        return ConfigType.PROPERTIES;
     }
 
 }
