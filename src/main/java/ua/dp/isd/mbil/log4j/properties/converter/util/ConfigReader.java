@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.Properties;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,16 +38,12 @@ public class ConfigReader {
     private <T extends Config> T parse(Path path, Class<T> configType) {
         try {
             T parsed = configType.newInstance();
-            for (String line : Files.readAllLines(path)) {
-                parseLine(line, parsed);
-            }
+            Properties props = new Properties();
+            props.load(Files.newInputStream(path));
+            parsed.getLineTranslator().translate(props);
             return parsed;
         } catch (InstantiationException | IllegalAccessException | IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private <T extends Config> void parseLine(String line, T parsed) {
-        parsed.getLineTranslator().translate(line);
     }
 }

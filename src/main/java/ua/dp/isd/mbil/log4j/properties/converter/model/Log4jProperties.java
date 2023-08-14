@@ -5,7 +5,6 @@ import java.util.Collection;
 public class Log4jProperties extends Config
 {
     private static final String CONFIG_FILENAME = "log4j.properties";
-
     @Override
     public String getConfigFileName() {
         return CONFIG_FILENAME;
@@ -17,12 +16,13 @@ public class Log4jProperties extends Config
     }
 
     @Override
-    public ConfigLineTranslator getLineTranslator() {
-        return null;
+    public ConfigTranslator getLineTranslator() {
+        return new Log4jPropertiesTranslator(this);
     }
 
     @Override
     public Collection<ConfigElement> getAllElements() {
         return null;
     }
+
 }

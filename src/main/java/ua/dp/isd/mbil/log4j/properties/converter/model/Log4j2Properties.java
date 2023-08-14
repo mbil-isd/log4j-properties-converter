@@ -25,8 +25,8 @@ public class Log4j2Properties extends Config {
     }
 
     @Override
-    public ConfigLineTranslator getLineTranslator() {
-        return new Log4j2PropertiesLineTranslator(this);
+    public ConfigTranslator getLineTranslator() {
+        return new Log4j2PropertiesTranslator(this);
     }
 
     @Override
