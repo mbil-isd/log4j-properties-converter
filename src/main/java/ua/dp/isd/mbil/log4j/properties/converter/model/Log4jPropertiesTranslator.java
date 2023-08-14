@@ -17,6 +17,7 @@ public class Log4jPropertiesTranslator extends ConfigTranslator {
     private static final String PATTERN_LAYOUT = "PatternLayout";
     private static final String XML_LAYOUT = "SmxXMLLayout";
     private static final String APPENDER_PATTERN_KEY = "ConversionPattern";
+    private static final String LOGGER_PREFIX = "log4j.logger";
     private final Log4jProperties log4jProperties;
 
     public Log4jPropertiesTranslator(Log4jProperties log4jProperties) {
@@ -78,7 +79,19 @@ public class Log4jPropertiesTranslator extends ConfigTranslator {
     }
 
     private List<Logger> getLoggers(Properties properties) {
-        return null;
+        List<Logger> loggers = new ArrayList<>();
+        for (String key : properties.stringPropertyNames()) {
+            if (key.startsWith(LOGGER_PREFIX)) {
+                String loggerName = key.replace(LOGGER_PREFIX, "").substring(1);
+                String loggerKey = loggerName.replaceAll("\\.", "");
+                Logger logger = new Logger();
+                logger.setKey(loggerKey);
+                logger.setName(loggerName);
+                logger.setLevel(properties.getProperty(key).trim());
+                loggers.add(logger);
+            }
+        }
+        return loggers;
     }
 
     private RootLogger getRootLogger(Properties properties) {

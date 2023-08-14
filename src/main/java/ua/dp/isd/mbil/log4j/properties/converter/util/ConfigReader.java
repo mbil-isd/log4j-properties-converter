@@ -42,7 +42,8 @@ public class ConfigReader {
             props.load(Files.newInputStream(path));
             parsed.getLineTranslator().translate(props);
             return parsed;
-        } catch (InstantiationException | IllegalAccessException | IOException e) {
+        } catch (Exception e) {
+            System.err.println("file: " + path + " was not translated because of error: " + e);
             throw new RuntimeException(e);
         }
     }
