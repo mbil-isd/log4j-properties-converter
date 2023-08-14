@@ -1,5 +1,6 @@
 package ua.dp.isd.mbil.log4j.properties.converter;
 
+import org.apache.log4j.helpers.LogLog;
 import ua.dp.isd.mbil.log4j.properties.converter.model.Log4j2Properties;
 import ua.dp.isd.mbil.log4j.properties.converter.model.Log4jProperties;
 import ua.dp.isd.mbil.log4j.properties.converter.util.ConfigReader;
@@ -21,6 +22,7 @@ public class ConfigConverter {
     }
 
     public void run() {
+        LogLog.setInternalDebugging(true);
         List<Log4jProperties> configs = reader.read(".", Log4jProperties.class);
         List<Log4j2Properties> converted = configs.stream().map(this::convertToLog4j2).collect(Collectors.toList());
         converted.forEach(c -> writer.write(c, "./out"));
