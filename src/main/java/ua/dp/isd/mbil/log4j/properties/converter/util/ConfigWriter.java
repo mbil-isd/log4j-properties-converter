@@ -24,6 +24,9 @@ public class ConfigWriter {
     }
 
     private List<String> getLines(Config config) {
-        return config.getAllElements().stream().map(Object::toString).collect(Collectors.toList());
+        return config.getAllElements().stream()
+                .map(Object::toString)
+                .map(s -> s + System.lineSeparator())
+                .collect(Collectors.toList());
     }
 }

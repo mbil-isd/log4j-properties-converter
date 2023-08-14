@@ -17,7 +17,7 @@ public class Layout {
         this.hasPattern = hasPattern;
     }
 
-    public boolean isHasPattern() {
+    public boolean hasPattern() {
         return hasPattern;
     }
 

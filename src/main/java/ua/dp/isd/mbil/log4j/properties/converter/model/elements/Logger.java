@@ -28,4 +28,11 @@ public class Logger {
     public String getLevel() {
         return level;
     }
+
+    @Override
+    public String toString() {
+        return "logger." + key + ".name = " + name +
+                System.lineSeparator() +
+                "logger." + key + ".level = " + level;
+    }
 }

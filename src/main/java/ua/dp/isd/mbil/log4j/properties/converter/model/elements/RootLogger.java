@@ -21,4 +21,9 @@ public class RootLogger {
     public List<String> getAppenderRefs() {
         return appenderRefs;
     }
+
+    @Override
+    public String toString() {
+        return "rootLogger = " + String.join(", ", level, String.join(", ", appenderRefs));
+    }
 }
