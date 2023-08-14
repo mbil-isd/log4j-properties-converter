@@ -22,8 +22,11 @@ public class ConfigConverter {
 
     public void run() {
         List<Log4jProperties> configs = reader.read(".", Log4jProperties.class);
+        System.out.println("found: " + configs.size() + " config files to convert");
         List<Log4j2Properties> converted = configs.stream().map(this::convertToLog4j2).collect(Collectors.toList());
-        converted.forEach(c -> writer.write(c, "./out"));
+        System.out.println("converted: " + converted.size() + " config files");
+        converted.forEach(writer::write);
+        System.out.println("files were written!");
     }
 
     private Log4j2Properties convertToLog4j2(Log4jProperties log4JProperties) {

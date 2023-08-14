@@ -41,6 +41,7 @@ public class ConfigReader {
             Properties props = new Properties();
             props.load(Files.newInputStream(path));
             parsed.getPropertiesTranslator().translate(props);
+            parsed.setPath(path.getParent());
             return parsed;
         } catch (Exception e) {
             System.err.println("file: " + path + " was not translated because of error: " + e);

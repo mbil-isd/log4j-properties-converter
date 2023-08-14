@@ -9,6 +9,7 @@ public class Log4jToLog4j2Converter {
         log4J2Properties.setRootLogger(log4JProperties.getRootLogger());
         log4J2Properties.setAppenders(log4JProperties.getAppenders());
         log4J2Properties.setLoggers(log4JProperties.getLoggers());
+        log4J2Properties.setPath(log4JProperties.getPath());
         return log4J2Properties;
     }
 }

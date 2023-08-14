@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ConfigWriter {
-    public void write(Config config, String destination) {
-        Path destinationPath = Paths.get(destination);
+    public void write(Config config) {
+        Path destinationPath = config.getPath();
         try {
             if (!Files.exists(destinationPath)) {
                 Files.createDirectories(destinationPath);
             }
-            Path destinationFile = Paths.get(destination, config.getConfigFileName());
+            Path destinationFile = Paths.get(destinationPath.toString(), config.getConfigFileName());
             Files.write(destinationFile, getLines(config));
         } catch (IOException e) {
             throw new RuntimeException(e);

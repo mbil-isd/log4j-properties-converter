@@ -4,6 +4,7 @@ import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Appender;
 import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Logger;
 import ua.dp.isd.mbil.log4j.properties.converter.model.elements.RootLogger;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +15,7 @@ public abstract class Config {
     private RootLogger rootLogger;
     private List<Logger> loggers;
     private List<Appender> appenders;
+    private Path path;
 
     public abstract String getConfigFileName();
 
@@ -47,5 +49,13 @@ public abstract class Config {
 
     public List<Appender> getAppenders() {
         return appenders;
+    }
+
+    public void setPath(Path path) {
+        this.path = path;
+    }
+
+    public Path getPath() {
+        return path;
     }
 }
