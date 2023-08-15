@@ -6,6 +6,7 @@ import org.apache.logging.log4j.core.appender.AsyncAppender;
 import org.apache.logging.log4j.core.appender.ConsoleAppender;
 import org.apache.logging.log4j.core.appender.FileAppender;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
+import org.apache.logging.log4j.core.appender.rolling.*;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.ConfigurationSource;
 import org.apache.logging.log4j.core.config.LoggerConfig;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -83,8 +85,12 @@ public class Log4jXmlConfigTranslator extends ConfigTranslator<Configuration> {
             translatedType = RollingFileAppender.PLUGIN_NAME;
             RollingFileAppender other = (RollingFileAppender) appender;
             fileName = other.getFileName();
+            translated.setMaxBackupIndex(getMaxBackupIndex(other));
+            translated.setMaxFileSize(getMaxFileSize(other));
         } else if (appender instanceof AsyncAppender) {
             translatedType = "Async";
+            AsyncAppender other = (AsyncAppender) appender;
+            translated.setAppenderRefs(Arrays.asList(other.getAppenderRefStrings()));
         } else {
             throw new IllegalArgumentException("unsupported appender: " + appender);
         }
@@ -97,6 +103,44 @@ public class Log4jXmlConfigTranslator extends ConfigTranslator<Configuration> {
         }
 
         return translated;
+    }
+
+    private String getMaxFileSize(RollingFileAppender other) {
+        TriggeringPolicy policy = other.getTriggeringPolicy();
+        SizeBasedTriggeringPolicy policy1;
+        if (policy instanceof SizeBasedTriggeringPolicy) {
+            policy1 = (SizeBasedTriggeringPolicy) policy;
+        } else if (policy instanceof CompositeTriggeringPolicy) {
+            TriggeringPolicy triggeringPolicy = ((CompositeTriggeringPolicy) policy).getTriggeringPolicies()[0];
+            if (triggeringPolicy instanceof SizeBasedTriggeringPolicy) {
+                policy1 = (SizeBasedTriggeringPolicy) triggeringPolicy;
+            } else {
+                throw new RuntimeException("unknown policy among composite triggering policy: " + triggeringPolicy);
+            }
+        } else {
+            throw new RuntimeException("unknown triggering policy");
+        }
+        long mbSize = policy1.getMaxFileSize() / 1000000;
+        if (mbSize > 0) {
+            return mbSize + "MB";
+        } else {
+            return policy1.getMaxFileSize() + "B";
+        }
+    }
+
+    private Integer getMaxBackupIndex(RollingFileAppender other) {
+        RolloverStrategy rolloverStrategy = other.getManager().getRolloverStrategy();
+        return extractMaxBackupIndex(rolloverStrategy);
+    }
+
+    private Integer extractMaxBackupIndex(RolloverStrategy rolloverStrategy) {
+        if (rolloverStrategy instanceof DefaultRolloverStrategy) {
+            return ((DefaultRolloverStrategy) rolloverStrategy).getMaxIndex();
+        }
+        if (rolloverStrategy instanceof DirectWriteRolloverStrategy) {
+            return ((DirectWriteRolloverStrategy) rolloverStrategy).getMaxFiles();
+        }
+        throw new IllegalArgumentException("unsupported rollover strategy: " + rolloverStrategy);
     }
 
     private Layout translateLayout(org.apache.logging.log4j.core.Layout<? extends Serializable> layout) {
