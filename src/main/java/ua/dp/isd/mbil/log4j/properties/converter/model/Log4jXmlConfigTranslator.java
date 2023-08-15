@@ -1,6 +1,9 @@
 package ua.dp.isd.mbil.log4j.properties.converter.model;
 
 
+import com.scc.log4j.CompactMessagePatternLayout;
+import org.apache.log4j.bridge.LayoutAdapter;
+import org.apache.log4j.layout.Log4j1XmlLayout;
 import org.apache.log4j.xml.XmlConfigurationFactory;
 import org.apache.logging.log4j.core.appender.AsyncAppender;
 import org.apache.logging.log4j.core.appender.ConsoleAppender;
@@ -77,16 +80,16 @@ public class Log4jXmlConfigTranslator extends ConfigTranslator<Configuration> {
         String fileName = null;
         if (appender instanceof ConsoleAppender) {
             translatedType = ConsoleAppender.PLUGIN_NAME;
-        } else if (appender instanceof FileAppender) {
-            translatedType = FileAppender.PLUGIN_NAME;
-            FileAppender other = (FileAppender) appender;
-            fileName = other.getFileName();
         } else if (appender instanceof RollingFileAppender) {
-            translatedType = RollingFileAppender.PLUGIN_NAME;
+            translatedType = "DailySizeRollingFileAppender";
             RollingFileAppender other = (RollingFileAppender) appender;
             fileName = other.getFileName();
             translated.setMaxBackupIndex(getMaxBackupIndex(other));
             translated.setMaxFileSize(getMaxFileSize(other));
+        } else if (appender instanceof FileAppender) {
+            translatedType = FileAppender.PLUGIN_NAME;
+            FileAppender other = (FileAppender) appender;
+            fileName = other.getFileName();
         } else if (appender instanceof AsyncAppender) {
             translatedType = "Async";
             AsyncAppender other = (AsyncAppender) appender;
@@ -152,6 +155,18 @@ public class Log4jXmlConfigTranslator extends ConfigTranslator<Configuration> {
             translated.setPattern(other.getConversionPattern());
         } else if (layout instanceof XmlLayout) {
             translatedType = "XMLLayoutl4j2_1";
+        } else if (layout instanceof Log4j1XmlLayout) {
+            translatedType = "XMLLayoutl4j2_1";
+        } else if (layout instanceof LayoutAdapter) {
+            org.apache.log4j.Layout other = ((LayoutAdapter) layout).getLayout();
+            if (other instanceof CompactMessagePatternLayout) {
+                translatedType = "CompactMessagePatternLayout";
+                CompactMessagePatternLayout other2 = (CompactMessagePatternLayout) other;
+                translated.setPattern(other2.getConversionPattern());
+                translated.setMsgSize(other2.getMsgSize());
+            } else {
+                throw new RuntimeException("unknown adapted layout: " + other);
+            }
         } else {
             throw new IllegalArgumentException("unsupported layout: " + layout);
         }

@@ -125,7 +125,10 @@ public class Log4j2XmlConfig extends Log4j2Config {
             if (layout.hasPattern()) {
                 result += " pattern=\"" + layout.getPattern() + "\"";
             } else {
-                result += "properties=\"true\" checkBadXmlSymbols=\"false\"";
+                result += " properties=\"true\" checkBadXmlSymbols=\"false\"";
+            }
+            if (layout.getMsgSize() != null) {
+                result += " msgSize=\"" + layout.getMsgSize() + "\"";
             }
             result += "/>";
         }

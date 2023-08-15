@@ -7,6 +7,7 @@ public class Main {
 //        boolean deleteAfterReading = true;
 //        String path = ".";
         boolean deleteAfterReading = false;
+        System.setProperty("log4jDir", "target");
         new ConfigConverter().run(path, deleteAfterReading);
     }
 }
