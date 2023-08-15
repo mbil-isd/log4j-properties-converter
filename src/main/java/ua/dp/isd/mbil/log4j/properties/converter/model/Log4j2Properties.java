@@ -26,12 +26,14 @@ public class Log4j2Properties extends Log4j2Config {
     @Override
     public Iterable<? extends CharSequence> getStringRepresentation() {
         List<String> lines = getLoggers().stream()
-                .map(this::stringifyLogger).collect(Collectors.toList());
+                .map(this::stringifyLogger)
+                .collect(Collectors.toList());
         Collection<String> appenderLines = getAppenders().stream()
                 .map(this::stringifyAppender)
                 .collect(Collectors.toList());
         lines.addAll(appenderLines);
         lines.add(stringifyRootLogger(getRootLogger()));
+        lines = lines.stream().map(s -> s + System.lineSeparator()).collect(Collectors.toList());
         return lines;
     }
 
