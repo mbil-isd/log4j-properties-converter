@@ -5,11 +5,7 @@ import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Logger;
 import ua.dp.isd.mbil.log4j.properties.converter.model.elements.RootLogger;
 
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public abstract class Config {
     private RootLogger rootLogger;
@@ -18,18 +14,13 @@ public abstract class Config {
     private Path path;
 
     public enum ConfigType {
-        XML, PROPERTIES
+        XML, PROPERTIES;
     }
-
     public abstract String getConfigFileName();
 
-    public abstract ConfigTranslator getPropertiesTranslator();
+    public abstract ConfigTranslator<?> getConfigTranslator();
 
-    public Collection<Object> getAllElements() {
-        return Stream.of(loggers, appenders, Collections.singleton(rootLogger))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-    }
+    public abstract Iterable<? extends CharSequence> getStringRepresentation();
 
     public void setRootLogger(RootLogger rootLogger) {
         this.rootLogger = rootLogger;

@@ -1,39 +1,48 @@
 package ua.dp.isd.mbil.log4j.properties.converter.model;
 
+import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Appender;
+import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Logger;
 import ua.dp.isd.mbil.log4j.properties.converter.model.elements.RootLogger;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
-public class Log4j2PropertiesTranslator extends ConfigTranslator {
-    private final Log4j2Properties log4j2Properties;
+public class Log4j2PropertiesTranslator extends ConfigTranslator<Properties> {
 
     public Log4j2PropertiesTranslator(Log4j2Properties log4j2Properties) {
-        this.log4j2Properties = log4j2Properties;
+        super(log4j2Properties);
     }
 
     @Override
-    public void translate(Properties properties) {
-
+    protected Properties createConfigHolder(InputStream inputStream) throws IOException {
+        return null;
     }
 
-    private RootLogger getRootLogger(Properties properties) {
+    protected RootLogger getRootLogger(Properties properties) {
+        return null;
+    }
+
+    @Override
+    protected List<Logger> getLoggers(Properties configHolder) {
+        return null;
+    }
+
+    @Override
+    protected List<Appender> getAppenders(Properties configHolder) {
         return null;
     }
 
     private void processUnknownLine(String line) {
-        
+
     }
 
     private void processAppenderLine(String line) {
     }
 
     private void processLoggerLine(String line) {
-        
-    }
 
-    private void processRootLoggerLine(String line) {
-        RootLogger rootLogger = new RootLogger();
-        log4j2Properties.setRootLogger(rootLogger);
     }
 
     private boolean isAppender(String line) {

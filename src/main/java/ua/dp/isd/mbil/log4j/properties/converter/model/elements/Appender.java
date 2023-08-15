@@ -1,7 +1,5 @@
 package ua.dp.isd.mbil.log4j.properties.converter.model.elements;
 
-import ua.dp.isd.mbil.log4j.properties.converter.model.Layout;
-
 public class Appender {
     private String name;
     private String type;
@@ -38,23 +36,5 @@ public class Appender {
 
     public String getFileName() {
         return fileName;
-    }
-
-    @Override
-    public String toString() {
-        String result = "appender." + name + ".name = " + name +
-                System.lineSeparator() +
-                "appender." + name + ".type = " + type +
-                System.lineSeparator() +
-                "appender." + name + ".layout = " + layout.getType();
-        if (layout.hasPattern()) {
-            result += System.lineSeparator() +
-                    "appender." + name + ".layout.pattern = " + layout.getPattern();
-        }
-        if (fileName != null) {
-            result += System.lineSeparator() +
-                    "appender." + name + ".fileName = " + fileName;
-        }
-        return result;
     }
 }

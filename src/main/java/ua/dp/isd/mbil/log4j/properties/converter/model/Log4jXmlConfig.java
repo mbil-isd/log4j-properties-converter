@@ -7,7 +7,12 @@ public class Log4jXmlConfig extends Log4jConfig {
     }
 
     @Override
-    public ConfigTranslator getPropertiesTranslator() {
+    public ConfigTranslator getConfigTranslator() {
+        return new Log4jXmlConfigTranslator(this);
+    }
+
+    @Override
+    public Iterable<? extends CharSequence> getStringRepresentation() {
         return null;
     }
 

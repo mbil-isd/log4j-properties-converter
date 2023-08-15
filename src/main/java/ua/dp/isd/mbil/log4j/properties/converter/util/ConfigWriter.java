@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class ConfigWriter {
     public void write(Config config) {
@@ -17,16 +15,9 @@ public class ConfigWriter {
                 Files.createDirectories(destinationPath);
             }
             Path destinationFile = Paths.get(destinationPath.toString(), config.getConfigFileName());
-            Files.write(destinationFile, getLines(config));
+            Files.write(destinationFile, config.getStringRepresentation());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private List<String> getLines(Config config) {
-        return config.getAllElements().stream()
-                .map(Object::toString)
-                .map(s -> s + System.lineSeparator())
-                .collect(Collectors.toList());
     }
 }

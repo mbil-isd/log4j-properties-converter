@@ -39,3 +39,4 @@ build/
 /log4j2.properties
 /.idea/
 /log4j.properties
+/log4j.xml

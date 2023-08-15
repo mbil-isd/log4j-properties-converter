@@ -1,0 +1,117 @@
+package ua.dp.isd.mbil.log4j.properties.converter.model;
+
+
+import org.apache.log4j.xml.XmlConfigurationFactory;
+import org.apache.logging.log4j.core.appender.AsyncAppender;
+import org.apache.logging.log4j.core.appender.ConsoleAppender;
+import org.apache.logging.log4j.core.appender.FileAppender;
+import org.apache.logging.log4j.core.appender.RollingFileAppender;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.ConfigurationSource;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.apache.logging.log4j.core.layout.XmlLayout;
+import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Appender;
+import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Layout;
+import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Logger;
+import ua.dp.isd.mbil.log4j.properties.converter.model.elements.RootLogger;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class Log4jXmlConfigTranslator extends ConfigTranslator<Configuration> {
+
+    public Log4jXmlConfigTranslator(Log4jXmlConfig log4jXmlConfig) {
+        super(log4jXmlConfig);
+    }
+
+    @Override
+    protected Configuration createConfigHolder(InputStream inputStream) throws IOException {
+        ConfigurationSource source = new ConfigurationSource(inputStream);
+        Configuration configuration = new XmlConfigurationFactory().getConfiguration(null, source);
+        configuration.start();
+        return configuration;
+    }
+
+    @Override
+    protected RootLogger getRootLogger(Configuration configHolder) {
+        RootLogger rootLogger = new RootLogger();
+        rootLogger.setLevel(configHolder.getRootLogger().getLevel().toString());
+        Set<String> appenderRefs = configHolder.getRootLogger().getAppenders().keySet();
+        rootLogger.setAppenderRefs(new ArrayList<>(appenderRefs));
+        return rootLogger;
+    }
+
+    @Override
+    protected List<Logger> getLoggers(Configuration configHolder) {
+        List<Logger> loggers = new ArrayList<>();
+        configHolder.getLoggers().values().stream()
+                .map(this::translateLogger)
+                .forEach(loggers::add);
+        return loggers;
+    }
+
+    private Logger translateLogger(LoggerConfig loggerConfig) {
+        Logger logger = new Logger();
+        logger.setName(loggerConfig.getName());
+        logger.setAppenderRefs(loggerConfig.getAppenders().keySet());
+        logger.setLevel(loggerConfig.getLevel().toString());
+        return logger;
+    }
+
+    @Override
+    protected List<Appender> getAppenders(Configuration configuration) {
+        return configuration.getAppenders().values().stream().map(this::translateAppender).collect(Collectors.toList());
+    }
+
+    private Appender translateAppender(org.apache.logging.log4j.core.Appender appender) {
+        Appender translated = new Appender();
+        String translatedType;
+        String fileName = null;
+        if (appender instanceof ConsoleAppender) {
+            translatedType = ConsoleAppender.PLUGIN_NAME;
+        } else if (appender instanceof FileAppender) {
+            translatedType = FileAppender.PLUGIN_NAME;
+            FileAppender other = (FileAppender) appender;
+            fileName = other.getFileName();
+        } else if (appender instanceof RollingFileAppender) {
+            translatedType = RollingFileAppender.PLUGIN_NAME;
+            RollingFileAppender other = (RollingFileAppender) appender;
+            fileName = other.getFileName();
+        } else if (appender instanceof AsyncAppender) {
+            translatedType = "Async";
+        } else {
+            throw new IllegalArgumentException("unsupported appender: " + appender);
+        }
+        translated.setType(translatedType);
+        translated.setFileName(fileName);
+        translated.setName(appender.getName());
+        org.apache.logging.log4j.core.Layout<? extends Serializable> layout = appender.getLayout();
+        if (layout != null) {
+            translated.setLayout(translateLayout(layout));
+        }
+
+        return translated;
+    }
+
+    private Layout translateLayout(org.apache.logging.log4j.core.Layout<? extends Serializable> layout) {
+        Layout translated = new Layout();
+        String translatedType;
+        if (layout instanceof PatternLayout) {
+            translatedType = "PatternLayout";
+            PatternLayout other = (PatternLayout) layout;
+            translated.setPattern(other.getConversionPattern());
+        } else if (layout instanceof XmlLayout) {
+            translatedType = "XMLLayoutl4j2_1";
+        } else {
+            throw new IllegalArgumentException("unsupported layout: " + layout);
+        }
+        translated.setType(translatedType);
+        return translated;
+    }
+}

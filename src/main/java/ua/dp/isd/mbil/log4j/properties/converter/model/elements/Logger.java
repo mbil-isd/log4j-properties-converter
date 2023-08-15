@@ -1,9 +1,12 @@
 package ua.dp.isd.mbil.log4j.properties.converter.model.elements;
 
+import java.util.Set;
+
 public class Logger {
     private String key;
     private String name;
     private String level;
+    private Set<String> appenderRefs;
 
     public void setKey(String key) {
         this.key = key;
@@ -29,10 +32,11 @@ public class Logger {
         return level;
     }
 
-    @Override
-    public String toString() {
-        return "logger." + key + ".name = " + name +
-                System.lineSeparator() +
-                "logger." + key + ".level = " + level;
+    public void setAppenderRefs(Set<String> appenderRefs) {
+        this.appenderRefs = appenderRefs;
+    }
+
+    public Set<String> getAppenderRefs() {
+        return appenderRefs;
     }
 }

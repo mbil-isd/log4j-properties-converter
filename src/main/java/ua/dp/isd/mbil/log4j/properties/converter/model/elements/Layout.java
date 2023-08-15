@@ -1,4 +1,4 @@
-package ua.dp.isd.mbil.log4j.properties.converter.model;
+package ua.dp.isd.mbil.log4j.properties.converter.model.elements;
 
 public class Layout {
     private String type;
@@ -23,6 +23,7 @@ public class Layout {
 
     public void setPattern(String pattern) {
         this.pattern = pattern;
+        setHasPattern(true);
     }
 
     public String getPattern() {

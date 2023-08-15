@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,9 +41,7 @@ public class ConfigReader {
     private <T extends Config> T parse(Path path, Class<T> configType, boolean deleteAfterReading) {
         try {
             T parsed = configType.newInstance();
-            Properties props = new Properties();
-            props.load(Files.newInputStream(path));
-            parsed.getPropertiesTranslator().translate(props);
+            parsed.getConfigTranslator().translate(Files.newInputStream(path));
             parsed.setPath(path.getParent());
             System.out.println("file: " + path + " successfully converted!");
             if (deleteAfterReading) {

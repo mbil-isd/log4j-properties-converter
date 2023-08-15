@@ -8,8 +8,13 @@ public class Log4jProperties extends Log4jConfig
         return CONFIG_FILENAME;
     }
     @Override
-    public ConfigTranslator getPropertiesTranslator() {
+    public ConfigTranslator getConfigTranslator() {
         return new Log4jPropertiesTranslator(this);
+    }
+
+    @Override
+    public Iterable<? extends CharSequence> getStringRepresentation() {
+        return null;
     }
 
     @Override

@@ -1,13 +1,16 @@
 package ua.dp.isd.mbil.log4j.properties.converter.model;
 
 import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Appender;
+import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Layout;
 import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Logger;
 import ua.dp.isd.mbil.log4j.properties.converter.model.elements.RootLogger;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Log4jPropertiesTranslator extends ConfigTranslator {
+public class Log4jPropertiesTranslator extends ConfigTranslator<Properties> {
 
     private static final String ROOT_LOGGER_KEY = "log4j.rootLogger";
     private static final String APPENDER_PREFIX = "log4j.appender";
@@ -19,20 +22,19 @@ public class Log4jPropertiesTranslator extends ConfigTranslator {
     private static final String APPENDER_PATTERN_KEY = "ConversionPattern";
     private static final String LOGGER_PREFIX = "log4j.logger";
     private static final String APPENDER_FILE_KEY = "file";
-    private final Log4jProperties log4jProperties;
 
     public Log4jPropertiesTranslator(Log4jProperties log4jProperties) {
-        this.log4jProperties = log4jProperties;
+        super(log4jProperties);
     }
 
     @Override
-    public void translate(Properties properties) {
-        log4jProperties.setRootLogger(getRootLogger(properties));
-        log4jProperties.setLoggers(getLoggers(properties));
-        log4jProperties.setAppenders(getAppenders(properties));
+    protected Properties createConfigHolder(InputStream inputStream) throws IOException {
+        Properties properties = new Properties();
+        properties.load(inputStream);
+        return properties;
     }
 
-    private List<Appender> getAppenders(Properties properties) {
+    protected List<Appender> getAppenders(Properties properties) {
         Map<String, Appender> appenderMap = new HashMap<>();
         for (String key : properties.stringPropertyNames()) {
             if (key.startsWith(APPENDER_PREFIX)) {
@@ -77,7 +79,7 @@ public class Log4jPropertiesTranslator extends ConfigTranslator {
         return layout;
     }
 
-    private List<Logger> getLoggers(Properties properties) {
+    protected List<Logger> getLoggers(Properties properties) {
         List<Logger> loggers = new ArrayList<>();
         for (String key : properties.stringPropertyNames()) {
             if (key.startsWith(LOGGER_PREFIX)) {
@@ -93,7 +95,7 @@ public class Log4jPropertiesTranslator extends ConfigTranslator {
         return loggers;
     }
 
-    private RootLogger getRootLogger(Properties properties) {
+    protected RootLogger getRootLogger(Properties properties) {
         String value = properties.getProperty(ROOT_LOGGER_KEY);
         if (value == null) {
             throw new RuntimeException("no root logger found");
