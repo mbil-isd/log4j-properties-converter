@@ -51,7 +51,7 @@ public class ConfigReader {
             return parsed;
         } catch (Exception e) {
             System.err.println("file: " + path + " was not translated because of error: " + e);
+            throw new RuntimeException(e);
         }
-        return null;
     }
 }

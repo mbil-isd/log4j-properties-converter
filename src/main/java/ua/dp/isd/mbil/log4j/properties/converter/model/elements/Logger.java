@@ -1,12 +1,13 @@
 package ua.dp.isd.mbil.log4j.properties.converter.model.elements;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Logger {
     private String key;
     private String name;
     private String level;
-    private Set<String> appenderRefs;
+    private Set<String> appenderRefs = new HashSet<>();
 
     public void setKey(String key) {
         this.key = key;

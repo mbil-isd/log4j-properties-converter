@@ -4,6 +4,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Appender;
 import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Layout;
+import ua.dp.isd.mbil.log4j.properties.converter.model.elements.Logger;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -36,13 +37,12 @@ public class Log4j2XmlConfig extends Log4j2Config {
         List<String> lines = new ArrayList<>();
         lines.add("<Configuration>");
         lines.addAll(stringifyAppenders());
-        lines.add(System.lineSeparator());
         lines.addAll(stringifyLoggers());
         lines.add("</Configuration>");
-        return pretify(lines);
+        return prettify(lines);
     }
 
-    private List<String> pretify(List<String> lines) {
+    private List<String> prettify(List<String> lines) {
         String xmlString = lines.stream().reduce(String::concat).orElseThrow(() -> new RuntimeException("no lines found"));
         try {
             InputSource src = new InputSource(new StringReader(xmlString));
@@ -64,7 +64,32 @@ public class Log4j2XmlConfig extends Log4j2Config {
     }
 
     private Collection<String> stringifyLoggers() {
-        return new ArrayList<>();
+        List<String> lines = new ArrayList<>();
+        lines.add("<Loggers>");
+        lines.addAll(getLoggers().stream().map(this::stringifyLogger).collect(Collectors.toList()));
+        lines.add(stringifyRootLogger());
+        lines.add("</Loggers>");
+        return lines;
+    }
+
+    private String stringifyRootLogger() {
+        String result = "<Root level=\"" + getRootLogger().getLevel() + "\">";
+        result += stringifyAppenderRefs(getRootLogger().getAppenderRefs());
+        result += "</Root>";
+        return result;
+    }
+
+    private String stringifyLogger(Logger logger) {
+        String result = "<Logger name=\"" + logger.getName() + "\" level=\"" + logger.getLevel() + "\">";
+        result += stringifyAppenderRefs(logger.getAppenderRefs());
+        result += "</Logger>";
+        return result;
+    }
+
+    private String stringifyAppenderRefs(Collection<String> appenderRefs) {
+        return appenderRefs.stream()
+                .map(this::stringifyAppenderRef)
+                .reduce(String::concat).orElse("");
     }
 
     private List<String> stringifyAppenders() {
