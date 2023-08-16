@@ -43,14 +43,14 @@ public class ConfigReader {
             T parsed = configType.newInstance();
             parsed.getConfigTranslator().translate(Files.newInputStream(path));
             parsed.setPath(path.getParent());
-            System.out.println("file: " + path + " successfully converted!");
+            System.out.println("file: " + path + " successfully parsed!");
             if (deleteAfterReading) {
                 Files.delete(path);
                 System.out.println("original file: " + path + " was deleted!");
             }
             return parsed;
         } catch (Exception e) {
-            System.err.println("file: " + path + " was not translated because of error: " + e);
+            System.err.println("file: " + path + " was not parsed because of error: " + e);
         }
         return null;
     }
