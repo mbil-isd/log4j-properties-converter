@@ -49,7 +49,7 @@ public class Log4j2Properties extends Log4j2Config {
         Layout layout = appender.getLayout();
         if (layout != null) {
             result += System.lineSeparator() +
-                    "appender." + name + ".layout = " + layout.getType();
+                    "appender." + name + ".layout.type = " + layout.getType();
             if (layout.hasPattern()) {
                 result += System.lineSeparator() +
                         "appender." + name + ".layout.pattern = " + layout.getPattern();
